@@ -13,7 +13,7 @@ export const dataSourceOptions: DataSourceOptions = {
   username: envVariables.DATABASE_USER,
   password: envVariables.DATABASE_PASSWORD,
   database: envVariables.DATABASE_NAME,
-  entities: ['src/db/entities/*.entity.ts'],
+  entities: ['src/**/*.entity.ts'],
   migrations: ['src/db/migrations/*.ts'],
   synchronize: false,
   migrationsRun: false,

@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './db/data-source';
+import { TimeSlotModule } from './modules/time-slot/time-slot.module';
 
 @Module({
   imports: [
@@ -13,8 +14,10 @@ import { dataSourceOptions } from './db/data-source';
     TypeOrmModule.forRoot({
       ...dataSourceOptions,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      migrations: ['dist/migrations/*{.ts,.js}'],
+      migrations: ['dist/db/migrations/*{.ts,.js}'],
+      migrationsRun: true,
     }),
+    TimeSlotModule,
   ],
   controllers: [],
   providers: [],
