@@ -4,6 +4,7 @@ import { validate } from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './db/data-source';
 import { TimeSlotModule } from './modules/time-slot/time-slot.module';
+import { AppointmentModule } from './modules/appointment/appointment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TimeSlotModule } from './modules/time-slot/time-slot.module';
       migrationsRun: true,
     }),
     TimeSlotModule,
+    AppointmentModule,
   ],
   controllers: [],
   providers: [],
