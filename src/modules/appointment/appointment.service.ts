@@ -2,19 +2,23 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { AppointmentRepository } from './appointment.repository';
 import { CreateAppointmentDTO } from './create-appointment.dto';
 import { ClientEntity } from '../../db/entities/client.entity';
-import { writeFile } from 'node:fs/promises';
+import { unlink, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
-import { extname, resolve } from 'node:path';
+import { extname } from 'node:path';
 import { AppointmentEntity } from '../../db/entities/appointment.entity';
 import { AttachmentEntity } from '../../db/entities/attachment.entity';
 import * as moment from 'moment';
 import { TIME_FORMAT, WEEK_DAYS } from '../../shared/constants';
 import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
 import { TimeRange } from '../../shared/types';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AppointmentService {
-  constructor(private readonly repository: AppointmentRepository) {}
+  constructor(
+    private readonly repository: AppointmentRepository,
+    private readonly configService: ConfigService,
+  ) {}
   public async create(
     attachments: Express.Multer.File[],
     body: CreateAppointmentDTO,
@@ -44,11 +48,11 @@ export class AppointmentService {
           const suffix = randomUUID();
           const extension = extname(attachment.originalname);
           const filename = `${suffix}${extension}`;
-          const destination = `./uploads/${filename}`;
+          const destination = `${this.configService.get('ATTACHMENTS_PATH')}/${filename}`;
 
           await manager.insert(AttachmentEntity, {
             originalName: attachment.originalname,
-            path: resolve(__dirname, destination),
+            path: destination,
             appointment: newAppointment,
           });
           return writeFile(destination, attachment.buffer);
@@ -121,10 +125,29 @@ export class AppointmentService {
       const endTime = moment(appointment.endTime, TIME_FORMAT);
       return (
         moment(appointmentDate).isSame(moment(appointment.date)) &&
-        (startTime.isBetween(appointmentTime.start, appointmentTime.end) ||
+        (startTime.isSame(appointmentTime.start) ||
+          endTime.isSame(appointmentTime.end) ||
+          startTime.isBetween(appointmentTime.start, appointmentTime.end) ||
           endTime.isBetween(appointmentTime.start, appointmentTime.end) ||
           appointmentTime.start.isBetween(startTime, endTime) ||
           appointmentTime.end.isBetween(startTime, endTime))
+      );
+    });
+  }
+
+  public async delete(id: number) {
+    await this.repository.getDataSource.transaction(async (manager) => {
+      const attachments = await manager.find(AttachmentEntity, {
+        where: { appointment: { id } },
+      });
+
+      await manager.delete(AttachmentEntity, { appointment: { id } });
+      await manager.delete(AppointmentEntity, { id });
+
+      await Promise.all(
+        attachments.map(async (attachment) => {
+          await unlink(attachment.path);
+        }),
       );
     });
   }

@@ -19,6 +19,9 @@ class EnvironmentVariables {
 
   @IsNumber()
   HTTP_PORT: number;
+
+  @IsString()
+  ATTACHMENTS_PATH: string;
 }
 
 export function validate(config: Record<string, unknown>) {

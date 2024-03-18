@@ -1,6 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  Param,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -23,5 +27,11 @@ export class AppointmentController {
     await this.service.create(attachments, createDto);
 
     return true;
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteAppointment(@Param('id') id: number) {
+    return this.service.delete(id);
   }
 }
