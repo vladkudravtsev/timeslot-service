@@ -23,6 +23,9 @@ export class AppointmentEntity {
   @JoinColumn({ name: 'time_slot_id' })
   timeSlot: TimeSlotEntity;
 
+  @Column({ type: 'date' })
+  date: Date;
+
   @ManyToOne(() => ClientEntity, (client) => client.appointments)
   @JoinColumn({ name: 'client_id' })
   client: ClientEntity;
