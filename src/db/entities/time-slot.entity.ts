@@ -14,17 +14,17 @@ export class TimeSlotEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  week_day: string;
+  @Column({ name: 'week_day' })
+  weekDay: string;
 
   @Column({ type: 'date', nullable: true })
   date: Date | null;
 
-  @Column({ type: 'timetz' })
-  start_time: Date;
+  @Column({ type: 'timetz', name: 'start_time' })
+  startTime: Date;
 
-  @Column({ type: 'timetz' })
-  end_time: Date;
+  @Column({ type: 'timetz', name: 'end_time' })
+  endTime: Date;
 
   @Column()
   type: string;
