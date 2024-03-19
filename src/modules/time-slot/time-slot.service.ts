@@ -53,7 +53,7 @@ export class TimeSlotService {
             }),
         );
       } else if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
-        if (rescheduleDto.timeSlotDate !== timeSlot.date) {
+        if (!moment(rescheduleDto.timeSlotDate).isSame(timeSlot.date)) {
           throw new BadRequestException('Invalid time slot date');
         }
 
