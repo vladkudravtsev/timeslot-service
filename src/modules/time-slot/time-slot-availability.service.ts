@@ -13,6 +13,14 @@ type AppointmentDateTime = {
 
 @Injectable()
 export class TimeSlotAvailabilityService {
+  /**
+   * This function checks if the time slot is available for the given appointment.
+   * It does the following validations:
+   *   - The appointment time should be within the time slot's time range.
+   *   - The appointment time should not be overlapping with any other existing appointments in the time slot.
+   *   - If the time slot is of type SINGLE, the appointment date should be the same as the time slot's date.
+   *   - If the time slot is of type RECURRING, the appointment date should be one of the week days of the time slot.
+   */
   public checkTimeSlotAvailability(
     appointment: AppointmentDateTime,
     timeSlot: TimeSlotEntity,
@@ -26,12 +34,13 @@ export class TimeSlotAvailabilityService {
       end: moment(timeSlot.endTime, TIME_FORMAT),
     };
 
+    // Validate appointment time
     const isValidTime = this.validateTime(appointmentTime, timeSlotTime);
     if (!isValidTime) {
       throw new BadRequestException('Invalid time range');
     }
 
-    // check if time slot is not reserved
+    // Check if time slot is not reserved
     const isReserved = this.isTimeSlotReserved(
       timeSlot.appointments,
       appointmentTime,
@@ -41,6 +50,7 @@ export class TimeSlotAvailabilityService {
       throw new BadRequestException('Time slot is reserved');
     }
 
+    // Validate appointment date
     if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
       const isSameDate = moment(appointment.date).isSame(moment(timeSlot.date));
       if (!isSameDate) {

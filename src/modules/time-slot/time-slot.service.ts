@@ -37,18 +37,21 @@ export class TimeSlotService {
           throw new BadRequestException('Invalid time slot date');
         }
 
-        const appointments = timeSlot.appointments
-          .filter((appointment) =>
-            moment(appointment.date).isSame(moment(rescheduleDto.timeSlotDate)),
-          )
-          .map((appointment) => {
-            return manager.save(AppointmentEntity, {
-              ...appointment,
-              date: rescheduleDto.newDate,
-            });
-          });
-
-        await Promise.all(appointments);
+        // Reschedule all appointments that belong to the specific date
+        await Promise.all(
+          timeSlot.appointments
+            .filter((appointment) =>
+              moment(appointment.date).isSame(
+                moment(rescheduleDto.timeSlotDate),
+              ),
+            )
+            .map((appointment) => {
+              return manager.save(AppointmentEntity, {
+                ...appointment,
+                date: rescheduleDto.newDate,
+              });
+            }),
+        );
       } else if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
         if (rescheduleDto.timeSlotDate !== timeSlot.date) {
           throw new BadRequestException('Invalid time slot date');
@@ -63,6 +66,7 @@ export class TimeSlotService {
             });
           }),
         );
+
         await manager.save(TimeSlotEntity, {
           ...timeSlot,
           date: rescheduleDto.newDate,
