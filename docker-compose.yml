@@ -1,0 +1,31 @@
+services:
+  dictionary-server:
+    build: .
+    ports:
+      - '${HTTP_PORT}:${HTTP_PORT}'
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=${DATABASE_PORT}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - HTTP_PORT=${HTTP_PORT}
+      - ATTACHMENTS_PATH=/app/uploads
+    depends_on:
+      - postgres
+    volumes:
+      - timeslot-uploads:/app/uploads
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - '${DATABASE_PORT}:${DATABASE_PORT}'
+    volumes:
+      - timeslot-data:/var/lib/postgresql/data
+
+volumes:
+  timeslot-uploads:
+  timeslot-data:
