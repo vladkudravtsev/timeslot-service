@@ -10,6 +10,10 @@ export class TimeSlotRepository {
     return this.dataSource.getRepository(TimeSlotEntity);
   }
 
+  public get getDataSource() {
+    return this.dataSource;
+  }
+
   public async getTimeSlots(): Promise<TimeSlotEntity[]> {
     return this.repository.find();
   }
