@@ -21,10 +21,10 @@ export class TimeSlotEntity {
   @Column({ type: 'date', nullable: true })
   date: Date | null;
 
-  @Column({ type: 'timetz', name: 'start_time' })
+  @Column({ type: 'time', name: 'start_time' })
   startTime: Date;
 
-  @Column({ type: 'timetz', name: 'end_time' })
+  @Column({ type: 'time', name: 'end_time' })
   endTime: Date;
 
   @Column()

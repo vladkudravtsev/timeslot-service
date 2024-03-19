@@ -13,10 +13,10 @@ export class AppointmentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'timetz', name: 'start_time' })
+  @Column({ type: 'time', name: 'start_time' })
   startTime: string;
 
-  @Column({ type: 'timetz', name: 'end_time' })
+  @Column({ type: 'time', name: 'end_time' })
   endTime: string;
 
   @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.appointments)

@@ -21,8 +21,8 @@ export class InitDataSchema1710753546598 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE "appointment" (
                 "id" SERIAL NOT NULL,
-                "start_time" TIME WITH TIME ZONE NOT NULL,
-                "end_time" TIME WITH TIME ZONE NOT NULL,
+                "start_time" TIME NOT NULL,
+                "end_time" TIME NOT NULL,
                 "time_slot_id" integer,
                 "client_id" integer,
                 CONSTRAINT "PK_e8be1a53027415e709ce8a2db74" PRIMARY KEY ("id")
@@ -33,8 +33,8 @@ export class InitDataSchema1710753546598 implements MigrationInterface {
                 "id" SERIAL NOT NULL,
                 "week_day" character varying NOT NULL,
                 "date" date,
-                "start_time" TIME WITH TIME ZONE NOT NULL,
-                "end_time" TIME WITH TIME ZONE NOT NULL,
+                "start_time" TIME NOT NULL,
+                "end_time" TIME NOT NULL,
                 "type" character varying NOT NULL,
                 "provider_id" integer,
                 CONSTRAINT "PK_03f782f8c4af029253f6ad5bacf" PRIMARY KEY ("id")

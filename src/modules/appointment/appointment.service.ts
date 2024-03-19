@@ -44,8 +44,8 @@ export class AppointmentService {
       const newAppointment = await manager.save(AppointmentEntity, {
         ...body,
         client,
-        startTime: moment(body.startTime, TIME_FORMAT).format('HH:mm:Z'),
-        endTime: moment(body.endTime, TIME_FORMAT).format('HH:mm:Z'),
+        startTime: moment(body.startTime, TIME_FORMAT).format(TIME_FORMAT),
+        endTime: moment(body.endTime, TIME_FORMAT).format(TIME_FORMAT),
         timeSlot,
       });
 
