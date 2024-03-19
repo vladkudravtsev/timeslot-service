@@ -40,6 +40,8 @@ export class AppointmentService {
       const newAppointment = await manager.save(AppointmentEntity, {
         ...body,
         client,
+        startTime: moment(body.startTime, TIME_FORMAT).format('HH:mm:Z'),
+        endTime: moment(body.endTime, TIME_FORMAT).format('HH:mm:Z'),
         timeSlot,
       });
 
@@ -97,9 +99,24 @@ export class AppointmentService {
     } else if (timeSlot.type === 'RECURRING') {
       const weekDay = moment(body.date).day();
 
-      if (WEEK_DAYS[weekDay] !== timeSlot.weekDay) {
+      const isRescheduledDate = timeSlot.reschedules.some((reschedule) =>
+        moment(reschedule.newDate).isSame(moment(body.date)),
+      );
+
+      if (WEEK_DAYS[weekDay] !== timeSlot.weekDay && !isRescheduledDate) {
         throw new BadRequestException('Time slot is not available');
       }
+
+      timeSlot.reschedules.forEach((reschedule) => {
+        const rescheduleDate = moment(reschedule.rescheduleDate);
+        const appointmentDate = moment(body.date);
+        const isSameDate = rescheduleDate.isSame(appointmentDate);
+        if (isSameDate) {
+          throw new BadRequestException(
+            `Time slot for ${appointmentDate.format('YYYY-MM-DD')} was rescheduled to ${reschedule.newDate}`,
+          );
+        }
+      });
     }
 
     return true;

@@ -13,7 +13,7 @@ export class AppointmentRepository {
   public async getTimeSlot(id: number) {
     return this.getDataSource.getRepository(TimeSlotEntity).findOne({
       where: { id },
-      relations: ['appointments'],
+      relations: ['appointments', 'reschedules'],
     });
   }
 }
