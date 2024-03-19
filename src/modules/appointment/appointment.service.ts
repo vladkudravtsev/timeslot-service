@@ -8,7 +8,7 @@ import { extname } from 'node:path';
 import { AppointmentEntity } from '../../db/entities/appointment.entity';
 import { AttachmentEntity } from '../../db/entities/attachment.entity';
 import * as moment from 'moment';
-import { TIME_FORMAT, WEEK_DAYS } from '../../shared/constants';
+import { TIME_FORMAT, TIME_SLOT_TYPE, WEEK_DAYS } from '../../shared/constants';
 import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
 import { TimeRange } from '../../shared/types';
 import { ConfigService } from '@nestjs/config';
@@ -91,12 +91,12 @@ export class AppointmentService {
       throw new BadRequestException('Time slot is reserved');
     }
 
-    if (timeSlot.type === 'SINGLE') {
+    if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
       const isSameDate = moment(body.date).isSame(moment(timeSlot.date));
       if (!isSameDate) {
         throw new BadRequestException('Time slot is not available');
       }
-    } else if (timeSlot.type === 'RECURRING') {
+    } else if (timeSlot.type === TIME_SLOT_TYPE.RECURRING) {
       const weekDay = moment(body.date).day();
 
       const isRescheduledDate = timeSlot.reschedules.some((reschedule) =>

@@ -24,9 +24,7 @@ export class AppointmentController {
     attachments: Express.Multer.File[],
     @Body() createDto: CreateAppointmentDTO,
   ) {
-    await this.service.create(attachments, createDto);
-
-    return true;
+    return this.service.create(attachments, createDto);
   }
 
   @Delete(':id')

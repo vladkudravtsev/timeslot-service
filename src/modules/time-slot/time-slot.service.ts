@@ -9,7 +9,7 @@ import { AppointmentEntity } from '../../db/entities/appointment.entity';
 import { RescheduleDTO } from './reschedule.dto';
 import * as moment from 'moment';
 import { TimeSlotRescheduleEntity } from '../../db/entities/time-slot-reschedule.entity';
-import { WEEK_DAYS } from '../../shared/constants';
+import { TIME_SLOT_TYPE, WEEK_DAYS } from '../../shared/constants';
 
 @Injectable()
 export class TimeSlotService {
@@ -30,7 +30,7 @@ export class TimeSlotService {
         throw new NotFoundException('Time slot not found');
       }
 
-      if (timeSlot.type === 'RECURRING') {
+      if (timeSlot.type === TIME_SLOT_TYPE.RECURRING) {
         const weekDay = moment(rescheduleDto.timeSlotDate).day();
 
         if (WEEK_DAYS[weekDay] !== timeSlot.weekDay) {
@@ -49,7 +49,7 @@ export class TimeSlotService {
           });
 
         await Promise.all(appointments);
-      } else if (timeSlot.type === 'SINGLE') {
+      } else if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
         if (rescheduleDto.timeSlotDate !== timeSlot.date) {
           throw new BadRequestException('Invalid time slot date');
         }

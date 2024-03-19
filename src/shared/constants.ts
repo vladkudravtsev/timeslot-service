@@ -1,5 +1,10 @@
 export const TIME_FORMAT = 'HH:mm';
 
+export const TIME_SLOT_TYPE = {
+  SINGLE: 'SINGLE',
+  RECURRING: 'RECURRING',
+};
+
 export const WEEK_DAYS = {
   0: 'SUNDAY',
   1: 'MONDAY',
