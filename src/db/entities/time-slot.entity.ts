@@ -9,6 +9,7 @@ import {
 import { ProviderEntity } from './provider.entity';
 import { AppointmentEntity } from './appointment.entity';
 import { TimeSlotRescheduleEntity } from './time-slot-reschedule.entity';
+import { TimeSlotCommuteMethodEntity } from './time-slot-commute-method.entity';
 
 @Entity({ name: 'time_slot' })
 export class TimeSlotEntity {
@@ -42,4 +43,10 @@ export class TimeSlotEntity {
     (reschedule) => reschedule.timeSlot,
   )
   reschedules: TimeSlotRescheduleEntity[];
+
+  @OneToMany(
+    () => TimeSlotCommuteMethodEntity,
+    (commuteMethod) => commuteMethod.timeSlot,
+  )
+  commuteMethods: TimeSlotCommuteMethodEntity[];
 }

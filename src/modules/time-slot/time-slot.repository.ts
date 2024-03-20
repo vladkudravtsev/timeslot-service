@@ -15,6 +15,11 @@ export class TimeSlotRepository {
   }
 
   public async getTimeSlots(): Promise<TimeSlotEntity[]> {
-    return this.repository.find();
+    return this.repository.find({
+      relations: {
+        commuteMethods: true,
+        appointments: true,
+      },
+    });
   }
 }
