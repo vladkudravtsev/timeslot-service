@@ -3,9 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
+import { TimeSlotEntity } from './time-slot.entity';
 import { TimeSlotRepository } from './time-slot.repository';
-import { AppointmentEntity } from '../../db/entities/appointment.entity';
+import { AppointmentEntity } from '../appointment/appointment.entity';
 import { RescheduleDTO } from './reschedule.dto';
 import * as moment from 'moment';
 import { TimeSlotRescheduleEntity } from '../../db/entities/time-slot-reschedule.entity';

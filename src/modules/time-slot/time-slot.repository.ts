@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
+import { TimeSlotEntity } from './time-slot.entity';
 import { DataSource } from 'typeorm';
 
 @Injectable()

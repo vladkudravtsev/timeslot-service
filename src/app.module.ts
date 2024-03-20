@@ -5,6 +5,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceOptions } from './db/data-source';
 import { TimeSlotModule } from './modules/time-slot/time-slot.module';
 import { AppointmentModule } from './modules/appointment/appointment.module';
+import { ProviderModule } from './modules/provider/provider.module';
+import { ClientModule } from './modules/client/client.module';
+import { TimeSlotCommuteMethodModule } from './modules/time-slot-commute-method/time-slot-commute-method.module';
+import { AttachmentModule } from './modules/attachment/attachment.module';
 
 @Module({
   imports: [
@@ -20,6 +24,10 @@ import { AppointmentModule } from './modules/appointment/appointment.module';
     }),
     TimeSlotModule,
     AppointmentModule,
+    ProviderModule,
+    ClientModule,
+    TimeSlotCommuteMethodModule,
+    AttachmentModule,
   ],
   controllers: [],
   providers: [],

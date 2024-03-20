@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
+import { TimeSlotEntity } from '../time-slot/time-slot.entity';
 
 @Injectable()
 export class AppointmentRepository {

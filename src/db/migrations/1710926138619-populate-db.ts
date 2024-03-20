@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { ProviderEntity } from '../entities/provider.entity';
-import { ClientEntity } from '../entities/client.entity';
+import { ProviderEntity } from '../../modules/provider/provider.entity';
+import { ClientEntity } from '../../modules/client/client.entity';
 import { TIME_SLOT_TYPE } from '../../shared/constants';
-import { TimeSlotEntity } from '../entities/time-slot.entity';
-import { TimeSlotCommuteMethodEntity } from '../entities/time-slot-commute-method.entity';
+import { TimeSlotEntity } from '../../modules/time-slot/time-slot.entity';
+import { TimeSlotCommuteMethodEntity } from '../../modules/time-slot-commute-method/time-slot-commute-method.entity';
 
 const timeSlots = [
   {

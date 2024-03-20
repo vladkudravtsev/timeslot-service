@@ -6,10 +6,10 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ProviderEntity } from './provider.entity';
-import { AppointmentEntity } from './appointment.entity';
-import { TimeSlotRescheduleEntity } from './time-slot-reschedule.entity';
-import { TimeSlotCommuteMethodEntity } from './time-slot-commute-method.entity';
+import { ProviderEntity } from '../provider/provider.entity';
+import { AppointmentEntity } from '../appointment/appointment.entity';
+import { TimeSlotRescheduleEntity } from '../../db/entities/time-slot-reschedule.entity';
+import { TimeSlotCommuteMethodEntity } from '../time-slot-commute-method/time-slot-commute-method.entity';
 
 @Entity({ name: 'time_slot' })
 export class TimeSlotEntity {

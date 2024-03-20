@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { TimeSlotEntity } from './time-slot.entity';
+import { TimeSlotEntity } from '../time-slot/time-slot.entity';
 
 @Entity({ name: 'time_slot_commute_method' })
 @Unique(['timeSlot', 'timeSlotDate'])

@@ -1,12 +1,12 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AppointmentRepository } from './appointment.repository';
 import { CreateAppointmentDTO } from './create-appointment.dto';
-import { ClientEntity } from '../../db/entities/client.entity';
+import { ClientEntity } from '../client/client.entity';
 import { unlink, writeFile } from 'node:fs/promises';
 import { randomUUID } from 'node:crypto';
 import { extname } from 'node:path';
-import { AppointmentEntity } from '../../db/entities/appointment.entity';
-import { AttachmentEntity } from '../../db/entities/attachment.entity';
+import { AppointmentEntity } from './appointment.entity';
+import { AttachmentEntity } from '../attachment/attachment.entity';
 import * as moment from 'moment';
 import { TIME_FORMAT } from '../../shared/constants';
 import { ConfigService } from '@nestjs/config';

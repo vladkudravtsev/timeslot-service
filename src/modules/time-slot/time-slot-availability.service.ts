@@ -1,9 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
+import { TimeSlotEntity } from './time-slot.entity';
 import * as moment from 'moment';
 import { TIME_FORMAT, TIME_SLOT_TYPE, WEEK_DAYS } from '../../shared/constants';
 import { TimeRange } from '../../shared/types';
-import { AppointmentEntity } from '../../db/entities/appointment.entity';
+import { AppointmentEntity } from '../appointment/appointment.entity';
 
 type AppointmentDateTime = {
   startTime: string;

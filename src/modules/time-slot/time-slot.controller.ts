@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { TimeSlotEntity } from '../../db/entities/time-slot.entity';
+import { TimeSlotEntity } from './time-slot.entity';
 import { TimeSlotService } from './time-slot.service';
 import { RescheduleDTO } from './reschedule.dto';
 

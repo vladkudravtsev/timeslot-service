@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { AppointmentEntity } from './appointment.entity';
+import { AppointmentEntity } from '../appointment/appointment.entity';
 
 @Entity({ name: 'attachment' })
 export class AttachmentEntity {

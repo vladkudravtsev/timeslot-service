@@ -5,8 +5,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TimeSlotEntity } from './time-slot.entity';
-import { ClientEntity } from './client.entity';
+import { TimeSlotEntity } from '../time-slot/time-slot.entity';
+import { ClientEntity } from '../client/client.entity';
 
 @Entity({ name: 'appointment' })
 export class AppointmentEntity {

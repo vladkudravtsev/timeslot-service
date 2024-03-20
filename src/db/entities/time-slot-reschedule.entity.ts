@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { TimeSlotEntity } from './time-slot.entity';
+import { TimeSlotEntity } from '../../modules/time-slot/time-slot.entity';
 
 @Entity({ name: 'time_slot_reschedule' })
 @Unique(['timeSlot', 'rescheduleDate'])

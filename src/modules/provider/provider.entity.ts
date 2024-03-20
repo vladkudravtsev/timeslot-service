@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { TimeSlotEntity } from './time-slot.entity';
+import { TimeSlotEntity } from '../time-slot/time-slot.entity';
 
 @Entity({ name: 'provider' })
 export class ProviderEntity {
