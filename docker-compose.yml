@@ -1,5 +1,5 @@
 services:
-  dictionary-server:
+  timeslot-server:
     build: .
     ports:
       - '${HTTP_PORT}:${HTTP_PORT}'
