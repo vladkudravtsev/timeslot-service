@@ -10,14 +10,14 @@ import { AttachmentEntity } from '../attachment/attachment.entity';
 import * as moment from 'moment';
 import { TIME_FORMAT } from '../../shared/constants';
 import { ConfigService } from '@nestjs/config';
-import { TimeSlotAvailabilityService } from '../time-slot/time-slot-availability.service';
+import { RRuleSet, rrulestr } from 'rrule';
+import { TimeSlotEntity } from '../time-slot/time-slot.entity';
 
 @Injectable()
 export class AppointmentService {
   constructor(
     private readonly repository: AppointmentRepository,
     private readonly configService: ConfigService,
-    private readonly timeSlotAvailabilityService: TimeSlotAvailabilityService,
   ) {}
   public async create(
     attachments: Express.Multer.File[],
@@ -28,19 +28,29 @@ export class AppointmentService {
       throw new BadRequestException('Time slot not found');
     }
 
-    const isAvailable =
-      this.timeSlotAvailabilityService.checkTimeSlotAvailability(
-        { startTime: body.startTime, endTime: body.endTime, date: body.date },
-        timeSlot,
-      );
-    if (!isAvailable) {
-      throw new BadRequestException('Time slot is not available');
+    const rrule = rrulestr(timeSlot.recurrenceRule, {
+      forceset: true,
+    }) as RRuleSet;
+
+    const ruleDates = rrule.all().map((d) => d.getTime());
+
+    if (!ruleDates.includes(body.date.getTime())) {
+      throw new BadRequestException('Invalid appointment date');
     }
 
-    const client = new ClientEntity();
-    client.id = body.clientId;
-
     await this.repository.getDataSource.transaction(async (manager) => {
+      const client = new ClientEntity();
+      client.id = body.clientId;
+
+      // exclude appointment date from rrule
+      const rruleClone = rrule.clone();
+      rruleClone.exdate(body.date);
+
+      await manager.update(TimeSlotEntity, timeSlot.id, {
+        recurrenceRule: rruleClone.toString(),
+      });
+
+      // TODO: save datetime as one property
       const newAppointment = await manager.save(AppointmentEntity, {
         ...body,
         client,

@@ -51,4 +51,7 @@ export class TimeSlotEntity {
     (commuteMethod) => commuteMethod.timeSlot,
   )
   commuteMethods: TimeSlotCommuteMethodEntity[];
+
+  @Column({ name: 'recurrence_rule' })
+  recurrenceRule: string;
 }
