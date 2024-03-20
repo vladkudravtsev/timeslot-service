@@ -1,8 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 import { ProviderEntity } from '../entities/provider.entity';
 import { ClientEntity } from '../entities/client.entity';
-import { TimeSlotEntity } from '../entities/time-slot.entity';
 import { TIME_SLOT_TYPE } from '../../shared/constants';
+import { TimeSlotEntity } from '../entities/time-slot.entity';
+import { TimeSlotCommuteMethodEntity } from '../entities/time-slot-commute-method.entity';
 
 const timeSlots = [
   {
@@ -25,8 +26,7 @@ const timeSlots = [
     endTime: '18:00:00',
   },
 ];
-
-export class PopulateDb1710840274438 implements MigrationInterface {
+export class PopulateDb1710926138619 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.manager.save(ProviderEntity, {
       name: 'test-provider',
@@ -36,10 +36,33 @@ export class PopulateDb1710840274438 implements MigrationInterface {
       email: 'testemail@gmail.com',
     });
 
-    await queryRunner.manager.save(TimeSlotEntity, timeSlots);
+    const [singleTimeSlot, recurringTimeSlot] = await queryRunner.manager.save(
+      TimeSlotEntity,
+      timeSlots,
+    );
+
+    await queryRunner.manager.save(TimeSlotCommuteMethodEntity, [
+      {
+        timeSlotDate: singleTimeSlot.date,
+        timeSlot: singleTimeSlot,
+        commuteMethod: 'DRIVING',
+      },
+      {
+        timeSlotDate: '03-20-2024',
+        timeSlot: recurringTimeSlot,
+        commuteMethod: 'WALKING',
+      },
+      {
+        timeSlotDate: '03-27-2024',
+        timeSlot: recurringTimeSlot,
+        commuteMethod: 'DRIVING',
+      },
+    ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query('TRUNCATE TABLE time_slot CASCADE');
+    await queryRunner.query('TRUNCATE TABLE provider CASCADE');
+    await queryRunner.query('TRUNCATE TABLE client CASCADE');
   }
 }
