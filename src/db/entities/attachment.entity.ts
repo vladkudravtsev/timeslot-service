@@ -18,7 +18,7 @@ export class AttachmentEntity {
   @Column()
   path: string;
 
-  @ManyToOne(() => AppointmentEntity)
+  @ManyToOne(() => AppointmentEntity, { nullable: false })
   @JoinColumn({ name: 'appointment_id' })
   appointment: AppointmentEntity;
 }

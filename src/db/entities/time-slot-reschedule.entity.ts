@@ -21,7 +21,9 @@ export class TimeSlotRescheduleEntity {
   @Column({ type: 'date', name: 'reschedule_date' })
   rescheduleDate: Date;
 
-  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.reschedules)
+  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.reschedules, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'time_slot_id' })
   timeSlot: TimeSlotEntity;
 }

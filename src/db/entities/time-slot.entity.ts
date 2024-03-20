@@ -31,7 +31,9 @@ export class TimeSlotEntity {
   @Column()
   type: string;
 
-  @ManyToOne(() => ProviderEntity, (provider) => provider.timeSlots)
+  @ManyToOne(() => ProviderEntity, (provider) => provider.timeSlots, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'provider_id' })
   provider: ProviderEntity;
 

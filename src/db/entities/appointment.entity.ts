@@ -19,14 +19,18 @@ export class AppointmentEntity {
   @Column({ type: 'time', name: 'end_time' })
   endTime: string;
 
-  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.appointments)
+  @ManyToOne(() => TimeSlotEntity, (timeSlot) => timeSlot.appointments, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'time_slot_id' })
   timeSlot: TimeSlotEntity;
 
   @Column({ type: 'date' })
   date: Date;
 
-  @ManyToOne(() => ClientEntity, (client) => client.appointments)
+  @ManyToOne(() => ClientEntity, (client) => client.appointments, {
+    nullable: false,
+  })
   @JoinColumn({ name: 'client_id' })
   client: ClientEntity;
 }
