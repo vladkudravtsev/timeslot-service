@@ -147,7 +147,7 @@ export class TimeSlotService {
     const newDate = moment(rescheduleDate.newDate);
 
     const newRruleSet = new RRuleSet();
-    // exclude all new datetimes
+    // exclude all appointments with new dates
     rruleSet.exdates().forEach((exdate) => {
       newRruleSet.exdate(
         moment(exdate)

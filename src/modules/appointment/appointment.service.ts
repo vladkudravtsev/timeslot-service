@@ -95,19 +95,20 @@ export class AppointmentService {
         forceset: true,
       }) as RRuleSet;
 
+      // filter out the deleted appointment date
       const exdates = rruleSet
         .exdates()
         .filter((d) => d.getTime() !== appointment.startDate.getTime());
 
       const newRruleSet = this.changeExDates(rruleSet, exdates);
 
-      const attachments = await manager.find(AttachmentEntity, {
-        where: { appointment: { id } },
-      });
-
       await manager.save(TimeSlotEntity, {
         ...timeSlot,
         recurrenceRule: newRruleSet.toString(),
+      });
+
+      const attachments = await manager.find(AttachmentEntity, {
+        where: { appointment: { id } },
       });
 
       await manager.delete(AttachmentEntity, { appointment: { id } });
