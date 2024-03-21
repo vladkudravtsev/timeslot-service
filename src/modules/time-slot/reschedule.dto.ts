@@ -9,7 +9,7 @@ export class RescheduleDTO {
 
   @IsDate()
   @IsOptional()
-  @Transform(({ value }) => new Date(value))
+  @Transform(({ value }) => value && new Date(value))
   @Expose({ name: 'time_slot_date' })
   timeSlotDate?: Date;
 }

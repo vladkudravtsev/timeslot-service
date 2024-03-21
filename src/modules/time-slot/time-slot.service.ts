@@ -43,36 +43,59 @@ export class TimeSlotService {
 
         const newRrule = this.createRecurringRules(rruleSet, rescheduleDto);
 
-        await manager.update(TimeSlotEntity, id, {
-          recurrenceRule: newRrule,
-        });
-
         // Reschedule all appointments that belong to the specific date
         await Promise.all(
           timeSlot.appointments
             .filter((appointment) =>
-              moment(appointment.date).isSame(
+              moment(appointment.startDate).isSame(
                 moment(rescheduleDto.timeSlotDate),
+                'day',
               ),
             )
-            .map((appointment) => {
+            .map(async (appointment) => {
+              const startDate = this.addTimeFromDate(
+                rescheduleDto.newDate,
+                appointment.startDate,
+              );
+              const endDate = this.addTimeFromDate(
+                rescheduleDto.newDate,
+                appointment.endDate,
+              );
+
+              // add the new date to exdates
+              newRrule.exdate(startDate);
+
               return manager.save(AppointmentEntity, {
                 ...appointment,
-                date: rescheduleDto.newDate,
+                startDate,
+                endDate,
               });
             }),
         );
+
+        await manager.update(TimeSlotEntity, id, {
+          recurrenceRule: newRrule.toString(),
+        });
       } else if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
         const newRrule = this.createSingleRule(rruleSet, rescheduleDto);
 
         await manager.update(TimeSlotEntity, id, {
           recurrenceRule: newRrule,
+          date: rescheduleDto.newDate,
         });
 
         // update all appointments that belong to the time slot
         await Promise.all(
           timeSlot.appointments.map(async (appointment) => {
-            appointment.date = rescheduleDto.newDate;
+            appointment.startDate = this.addTimeFromDate(
+              rescheduleDto.newDate,
+              appointment.startDate,
+            );
+
+            appointment.endDate = this.addTimeFromDate(
+              rescheduleDto.newDate,
+              appointment.endDate,
+            );
 
             return manager.save(AppointmentEntity, {
               ...appointment,
@@ -116,18 +139,41 @@ export class TimeSlotService {
       }),
     );
 
-    return rruleClone.toString();
+    return rruleClone;
   }
 
   private createSingleRule(rruleSet: RRuleSet, rescheduleDate: RescheduleDTO) {
     const [rrule] = rruleSet.rrules();
     const newDate = moment(rescheduleDate.newDate);
+
+    const newRruleSet = new RRuleSet();
+    // exclude all new datetimes
+    rruleSet.exdates().forEach((exdate) => {
+      newRruleSet.exdate(
+        moment(exdate)
+          .set({
+            year: newDate.year(),
+            month: newDate.month(),
+            date: newDate.date(),
+          })
+          .toDate(),
+      );
+    });
+
     const newRrule = new RRule({
       ...rrule.options,
       dtstart: newDate.startOf('day').toDate(),
       until: newDate.endOf('day').toDate(),
     });
+    newRruleSet.rrule(newRrule);
 
-    return newRrule.toString();
+    return newRruleSet.toString();
+  }
+
+  private addTimeFromDate(date: Date, time: Date) {
+    return moment(date)
+      .set('hours', time.getHours())
+      .set('minutes', time.getMinutes())
+      .toDate();
   }
 }

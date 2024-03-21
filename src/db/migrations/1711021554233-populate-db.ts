@@ -9,14 +9,14 @@ const timeSlots = [
   {
     type: TIME_SLOT_TYPE.SINGLE,
     weekDay: 'MONDAY',
-    date: '2024-03-18',
+    date: '2024-03-20',
     recurrenceRule:
       'DTSTART:20240320T100000Z RRULE:FREQ=MINUTELY;UNTIL=20240320T200000Z;INTERVAL=60;WKST=WE;BYHOUR=10,11,12,13,14,15,16,17,18,19',
     provider: {
       id: 1,
     },
-    startTime: '09:00:00',
-    endTime: '15:00:00',
+    startTime: '10:00:00',
+    endTime: '19:00:00',
   },
   {
     type: TIME_SLOT_TYPE.RECURRING,
@@ -27,11 +27,11 @@ const timeSlots = [
     recurrenceRule:
       'DTSTART:20240318T100000Z RRULE:FREQ=MINUTELY;UNTIL=20250317T200000Z;INTERVAL=60;WKST=WE;BYDAY=WE;BYHOUR=10,11,12,13,14,15,16,17,18,19',
     startTime: '10:00:00',
-    endTime: '18:00:00',
+    endTime: '19:00:00',
   },
 ];
 
-export class PopulateDb1710944241172 implements MigrationInterface {
+export class PopulateDb1711021554233 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.manager.save(ProviderEntity, {
       name: 'test-provider',

@@ -1,15 +1,7 @@
 import { Expose, Transform } from 'class-transformer';
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNumber } from 'class-validator';
 
 export class CreateAppointmentDTO {
-  @IsString()
-  @Expose({ name: 'start_time' })
-  public startTime: string;
-
-  @IsString()
-  @Expose({ name: 'end_time' })
-  public endTime: string;
-
   @IsNumber()
   @Transform(({ value }) => Number(value))
   @Expose({ name: 'client_id' })

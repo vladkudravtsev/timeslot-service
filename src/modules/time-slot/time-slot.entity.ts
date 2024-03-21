@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { ProviderEntity } from '../provider/provider.entity';
 import { AppointmentEntity } from '../appointment/appointment.entity';
-import { TimeSlotRescheduleEntity } from '../../db/entities/time-slot-reschedule.entity';
 import { TimeSlotCommuteMethodEntity } from '../time-slot-commute-method/time-slot-commute-method.entity';
 
 @Entity({ name: 'time_slot' })
@@ -39,12 +38,6 @@ export class TimeSlotEntity {
 
   @OneToMany(() => AppointmentEntity, (appointment) => appointment.timeSlot)
   appointments: AppointmentEntity[];
-
-  @OneToMany(
-    () => TimeSlotRescheduleEntity,
-    (reschedule) => reschedule.timeSlot,
-  )
-  reschedules: TimeSlotRescheduleEntity[];
 
   @OneToMany(
     () => TimeSlotCommuteMethodEntity,
