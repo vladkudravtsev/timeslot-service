@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class InitDataSchema1710923943480 implements MigrationInterface {
-  name = 'InitDataSchema1710923943480';
+export class InitDataSchema1710944213965 implements MigrationInterface {
+  name = 'InitDataSchema1710944213965';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
@@ -41,16 +41,6 @@ export class InitDataSchema1710923943480 implements MigrationInterface {
             )
         `);
     await queryRunner.query(`
-            CREATE TABLE "time_slot_commute_method" (
-                "id" SERIAL NOT NULL,
-                "commute_method" character varying NOT NULL,
-                "time_slot_date" date NOT NULL,
-                "time_slot_id" integer NOT NULL,
-                CONSTRAINT "UQ_dd676ab101ac93162742d6ba71e" UNIQUE ("time_slot_id", "time_slot_date"),
-                CONSTRAINT "PK_f23398b6d67bc2cd317957d4925" PRIMARY KEY ("id")
-            )
-        `);
-    await queryRunner.query(`
             CREATE TABLE "time_slot" (
                 "id" SERIAL NOT NULL,
                 "week_day" character varying NOT NULL,
@@ -58,8 +48,19 @@ export class InitDataSchema1710923943480 implements MigrationInterface {
                 "start_time" TIME NOT NULL,
                 "end_time" TIME NOT NULL,
                 "type" character varying NOT NULL,
+                "recurrence_rule" character varying NOT NULL,
                 "provider_id" integer NOT NULL,
                 CONSTRAINT "PK_03f782f8c4af029253f6ad5bacf" PRIMARY KEY ("id")
+            )
+        `);
+    await queryRunner.query(`
+            CREATE TABLE "time_slot_commute_method" (
+                "id" SERIAL NOT NULL,
+                "commute_method" character varying NOT NULL,
+                "time_slot_date" date NOT NULL,
+                "time_slot_id" integer NOT NULL,
+                CONSTRAINT "UQ_dd676ab101ac93162742d6ba71e" UNIQUE ("time_slot_id", "time_slot_date"),
+                CONSTRAINT "PK_f23398b6d67bc2cd317957d4925" PRIMARY KEY ("id")
             )
         `);
     await queryRunner.query(`
@@ -84,12 +85,12 @@ export class InitDataSchema1710923943480 implements MigrationInterface {
             ADD CONSTRAINT "FK_193b50b76081b6bd3ac5491d696" FOREIGN KEY ("time_slot_id") REFERENCES "time_slot"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
-            ALTER TABLE "time_slot_commute_method"
-            ADD CONSTRAINT "FK_50d6b398db726283fefe5f949c2" FOREIGN KEY ("time_slot_id") REFERENCES "time_slot"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-    await queryRunner.query(`
             ALTER TABLE "time_slot"
             ADD CONSTRAINT "FK_3a26fe357f3d0685241e857097f" FOREIGN KEY ("provider_id") REFERENCES "provider"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+    await queryRunner.query(`
+            ALTER TABLE "time_slot_commute_method"
+            ADD CONSTRAINT "FK_50d6b398db726283fefe5f949c2" FOREIGN KEY ("time_slot_id") REFERENCES "time_slot"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
     await queryRunner.query(`
             ALTER TABLE "attachment"
@@ -102,10 +103,10 @@ export class InitDataSchema1710923943480 implements MigrationInterface {
             ALTER TABLE "attachment" DROP CONSTRAINT "FK_a0f636d120d727501e5e9c52ebd"
         `);
     await queryRunner.query(`
-            ALTER TABLE "time_slot" DROP CONSTRAINT "FK_3a26fe357f3d0685241e857097f"
+            ALTER TABLE "time_slot_commute_method" DROP CONSTRAINT "FK_50d6b398db726283fefe5f949c2"
         `);
     await queryRunner.query(`
-            ALTER TABLE "time_slot_commute_method" DROP CONSTRAINT "FK_50d6b398db726283fefe5f949c2"
+            ALTER TABLE "time_slot" DROP CONSTRAINT "FK_3a26fe357f3d0685241e857097f"
         `);
     await queryRunner.query(`
             ALTER TABLE "time_slot_reschedule" DROP CONSTRAINT "FK_193b50b76081b6bd3ac5491d696"
@@ -120,10 +121,10 @@ export class InitDataSchema1710923943480 implements MigrationInterface {
             DROP TABLE "attachment"
         `);
     await queryRunner.query(`
-            DROP TABLE "time_slot"
+            DROP TABLE "time_slot_commute_method"
         `);
     await queryRunner.query(`
-            DROP TABLE "time_slot_commute_method"
+            DROP TABLE "time_slot"
         `);
     await queryRunner.query(`
             DROP TABLE "time_slot_reschedule"

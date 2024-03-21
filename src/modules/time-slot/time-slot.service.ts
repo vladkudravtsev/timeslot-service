@@ -8,8 +8,8 @@ import { TimeSlotRepository } from './time-slot.repository';
 import { AppointmentEntity } from '../appointment/appointment.entity';
 import { RescheduleDTO } from './reschedule.dto';
 import * as moment from 'moment';
-import { TimeSlotRescheduleEntity } from '../../db/entities/time-slot-reschedule.entity';
-import { TIME_SLOT_TYPE, WEEK_DAYS } from '../../shared/constants';
+import { TIME_SLOT_TYPE } from '../../shared/constants';
+import { RRule, RRuleSet, rrulestr } from 'rrule';
 
 @Injectable()
 export class TimeSlotService {
@@ -30,12 +30,22 @@ export class TimeSlotService {
         throw new NotFoundException('Time slot not found');
       }
 
-      if (timeSlot.type === TIME_SLOT_TYPE.RECURRING) {
-        const weekDay = moment(rescheduleDto.timeSlotDate).day();
+      const rruleSet = rrulestr(timeSlot.recurrenceRule, {
+        forceset: true,
+      }) as RRuleSet;
 
-        if (WEEK_DAYS[weekDay] !== timeSlot.weekDay) {
-          throw new BadRequestException('Invalid time slot date');
+      if (timeSlot.type === TIME_SLOT_TYPE.RECURRING) {
+        if (!rescheduleDto.timeSlotDate) {
+          throw new BadRequestException(
+            'Time slot date for recurring time slot is required',
+          );
         }
+
+        const newRrule = this.createRecurringRules(rruleSet, rescheduleDto);
+
+        await manager.update(TimeSlotEntity, id, {
+          recurrenceRule: newRrule,
+        });
 
         // Reschedule all appointments that belong to the specific date
         await Promise.all(
@@ -53,10 +63,13 @@ export class TimeSlotService {
             }),
         );
       } else if (timeSlot.type === TIME_SLOT_TYPE.SINGLE) {
-        if (!moment(rescheduleDto.timeSlotDate).isSame(timeSlot.date)) {
-          throw new BadRequestException('Invalid time slot date');
-        }
+        const newRrule = this.createSingleRule(rruleSet, rescheduleDto);
 
+        await manager.update(TimeSlotEntity, id, {
+          recurrenceRule: newRrule,
+        });
+
+        // update all appointments that belong to the time slot
         await Promise.all(
           timeSlot.appointments.map(async (appointment) => {
             appointment.date = rescheduleDto.newDate;
@@ -66,18 +79,55 @@ export class TimeSlotService {
             });
           }),
         );
-
-        await manager.save(TimeSlotEntity, {
-          ...timeSlot,
-          date: rescheduleDto.newDate,
-        });
       }
-
-      await manager.insert(TimeSlotRescheduleEntity, {
-        newDate: rescheduleDto.newDate,
-        rescheduleDate: rescheduleDto.timeSlotDate,
-        timeSlot: timeSlot,
-      });
     });
+  }
+
+  private createRecurringRules(
+    rruleSet: RRuleSet,
+    rescheduleDate: RescheduleDTO,
+  ) {
+    const rruleClone = rruleSet.clone();
+    const [rrule] = rruleClone.rrules();
+
+    const timeSlotDate = moment(rescheduleDate.timeSlotDate);
+    const newDate = moment(rescheduleDate.newDate);
+
+    // exclude all datetimes for specific day
+    rruleClone.exrule(
+      new RRule({
+        interval: rrule.options.interval,
+        until: timeSlotDate.endOf('day').toDate(),
+        freq: rrule.options.freq,
+        bymonth: timeSlotDate.month() + 1,
+        bymonthday: timeSlotDate.date(),
+      }),
+    );
+
+    // include new date
+    rruleClone.rrule(
+      new RRule({
+        interval: rrule.options.interval,
+        until: newDate.endOf('day').toDate(),
+        byhour: rrule.options.byhour,
+        bymonth: newDate.month() + 1,
+        bymonthday: newDate.date(),
+        freq: rrule.options.freq,
+      }),
+    );
+
+    return rruleClone.toString();
+  }
+
+  private createSingleRule(rruleSet: RRuleSet, rescheduleDate: RescheduleDTO) {
+    const [rrule] = rruleSet.rrules();
+    const newDate = moment(rescheduleDate.newDate);
+    const newRrule = new RRule({
+      ...rrule.options,
+      dtstart: newDate.startOf('day').toDate(),
+      until: newDate.endOf('day').toDate(),
+    });
+
+    return newRrule.toString();
   }
 }
